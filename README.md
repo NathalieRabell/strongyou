@@ -1,2 +1,2 @@
-# strongyou
+# Strong You
 School project
