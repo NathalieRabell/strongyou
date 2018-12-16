@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Strong You - Workout Log</title>
+  
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBE4vMFLnD6W2dqkZgPQSg_Lm8y4YkbdC0",
+    authDomain: "strong-you-41264.firebaseapp.com",
+    databaseURL: "https://strong-you-41264.firebaseio.com",
+    projectId: "strong-you-41264",
+    storageBucket: "strong-you-41264.appspot.com",
+    messagingSenderId: "353394575532"
+  };
+  firebase.initializeApp(config);
+</script>
+</head>
+
+<body>
+
+  <div style="width: 50%; margin: 0 auto; text-align: center;">
+  <h2>Workout session</h2>
+  <hr>
+  <h3>Previous:</h3>
+  <pre id="output"></pre>
+  <hr>
+  <form>
+    <h3>Current:</h3>
+    <label for="reps">Repetitions</label>
+    <input type="text" id="reps" placeholder="" required>
+<label for="kg">Weight</label>
+    <input type="text" id="kg" placeholder="" required>
+    <button type="submit" id="submit">Add workout</button>
+  </form>
+  </div>
+  
+  
+  <script>
+  var database = firebase.database();
+    var submitButton = document.getElementById('submit');
+    submitButton.addEventListener('click', createWorkout)
+  //read from database
+  database.ref('workout-log/').once('value', function(snapshot) {
+      snapshot.forEach(function (childSnap) {
+      // storing all keys (i.e. "player1", "player2", ... )
+      let allWorkouts = childSnap.child('reps').val();
+      // storing all values of the child node "score"
+      let allScores = childSnap.child('kg').val();
+        console.log(allScores);
+      // rendering the keys and values
+      document.getElementById('output').innerHTML += allWorkouts + ' reps' + ' ' + allScores + ' kg' + '<br>';
+    });
+  });
+  //write to database
+  function createWorkout (){
+    var reps = document.getElementById('reps').value;
+    var kg = document.getElementById('kg').value;
+    var workoutData = {
+      "reps" : reps, 
+      "kg" : kg
+    }
+    var newWorkout = database.ref('workout-log/').push().key;
+    database.ref('workout-log/' + newWorkout).update(workoutData);
+  }
+    
+  </script>
+
+</body>
+</html>
